@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+PREFIX="bash-brew-service"
+EXTENSION="plist"
+SERVICE_NAME="$1"
+SERVICE_DEST="$HOME/Library/LaunchAgents/$PREFIX.$SERVICE_NAME.$EXTENSION"
+PLIST_PATH="$2"
+
+# no service name specified
+if [ -z "$SERVICE_NAME" ] ; then
+  echo "Error: No service name specified"
+  exit
+fi
+
+# no service name specified
+if [ -z "$PLIST_PATH" ] ; then
+  echo "Error: No plist path specified"
+  exit
+fi
+
+ln "$PLIST_PATH" "$SERVICE_DEST"

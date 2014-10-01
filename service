@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+PREFIX="bash-brew-service"
+EXTENSION="plist"
+SERVICE_NAME="$1"
+SERVICE_COMMAND="$2"
+
+# no arg specified, start/stop etc
+if [ -z "$SERVICE_COMMAND" ] ; then
+  echo "Error: No command specified"
+  exit
+fi
+
+# no service name specified
+if [ -z "$SERVICE_NAME" ] ; then
+  echo "Error: No service specified"
+  exit
+fi
+
+PLIST_FILE="$PREFIX.$SERVICE_NAME.$EXTENSION"
+
+if [ -z "$PLIST_FILE" ] ; then
+  echo "Error: No plist file found for service"
+  exit
+fi
+
+launchctl "$SERVICE_COMMAND" "$HOME/Library/LaunchAgents/$PLIST_FILE"
