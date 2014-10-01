@@ -29,3 +29,21 @@ chmod +x install.sh
 
 ### Uninstalling
 If you used the `install.sh` script Simply delete `~/.bin/brew-service`
+
+### Usage
+
+```
+$ brew install redis
+$ service-install redis /usr/local/Cellar/redis/2.8.17/homebrew.mxcl.redis.plist
+$ service-list
+redis
+$ service redis load
+$ redis-cli
+127.0.0.1:6379> exit
+$ service redis unload
+$ redis-cli
+Could not connect to Redis at 127.0.0.1:6379: Connection refused
+$ service-remove redis
+$ service-list
+$ exit
+```
