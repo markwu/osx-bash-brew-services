@@ -1,5 +1,5 @@
-# Bash Brew Service
-A bash script to take some of the pain away from managing homebrew processes with launchctl.
+# Bash Brew Services
+A bash script to take some of the pain away from managing homebrew services with launchctl.
 
 ### Installation
 Copy the script to a directory on your $PATH and make it executable.
