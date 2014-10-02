@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+
+# Bash Brew Services
+# Author: Mitchell Nemitz <mitchell.nemitz@gmail.com>
+# License: GNU GPL v3
+
+# Available commands:
+COMMAND_START="start"     # launchctl load an installed service
+COMMAND_STOP="stop"       # launchctl unload an installed service
+COMMAND_RESTART="restart" # stop then start an installed service
+COMMAND_INSTALL="install" # install a service from a plist file
+COMMAND_REMOVE="remove"   # remove an installed service by name
+COMMAND_LIST="list"       # list all installed services
+COMMAND_HELP="help"       # show usage information
+
+# version
+SCRIPT_VERSION="1.0.1"
+
+# globals
+PREFIX="brew-service"
+EXTENSION="plist"
+AGENTS_DIR="$HOME/Library/LaunchAgents"
+
+# arguments
+SCRIPT="$(basename $0)"
+COMMAND="$1"
+NAME="$2"
+FILE="$3"
+
+# $1 = $MESSAGE
+function ERROR {
+  printf "Error: $1\n"
+  exit
+}
+
+# $1 = $NAME
+# $2 = $TYPE
+function EMPTY_STRING {
+  if [ -z "$1" ] ; then
+    ERROR "No $2 specified"
+  fi
+}
+
+# $1 = $PATH
+function SERVICE_EXISTS {
+  if [ ! -f "$1" ] ; then
+    ERROR "Service '$NAME' does not exist"
+  fi
+}
+
+# $1 = $PATH
+function SERVICE_INSTALLED {
+  if [ -f "$1" ] ; then
+    ERROR "Service '$NAME' is already installed"
+  fi
+}
+
+# $1 = $FILE
+function FILE_EXISTS {
+  if [ ! -f "$1" ] ; then
+    ERROR "File '$1' does not exist"
+  fi
+}
+
+# print version info
+function SHOW_VERSION {
+  printf "Bash Brew Services, version $SCRIPT_VERSION\n"
+}
+
+# print usage info
+function SHOW_HELP {
+  SHOW_VERSION
+
+  printf "Usage:\t$SCRIPT $COMMAND_INSTALL [name] [file]\n"
+  printf "\t$SCRIPT $COMMAND_REMOVE [name]\n"
+  printf "\t$SCRIPT $COMMAND_START [name]\n"
+  printf "\t$SCRIPT $COMMAND_STOP [name]\n"
+  printf "\t$SCRIPT $COMMAND_RESTART [name]\n"
+  printf "\t$SCRIPT $COMMAND_LIST\n"
+  printf "\t$SCRIPT $COMMAND_HELP\n"
+}
+
+# load a service
+if [ "$COMMAND" == "$COMMAND_START" ] ; then
+  TARGET_PATH="$AGENTS_DIR/$PREFIX.$NAME.$EXTENSION"
+
+  EMPTY_STRING "$NAME" "service"
+  SERVICE_EXISTS "$TARGET_PATH"
+
+  launchctl load "$TARGET_PATH"
+  exit
+fi
+
+# unload a service
+if [ "$COMMAND" == "$COMMAND_STOP" ] ; then
+  TARGET_PATH="$AGENTS_DIR/$PREFIX.$NAME.$EXTENSION"
+
+  EMPTY_STRING "$NAME" "service"
+  SERVICE_EXISTS "$TARGET_PATH"
+
+  launchctl unload "$TARGET_PATH"
+  exit
+fi
+
+# unload and reload a service
+if [ "$COMMAND" == "$COMMAND_RESTART" ] ; then
+  TARGET_PATH="$AGENTS_DIR/$PREFIX.$NAME.$EXTENSION"
+
+  EMPTY_STRING "$NAME" "service"
+  SERVICE_EXISTS "$TARGET_PATH"
+
+  launchctl unload "$TARGET_PATH"
+  launchctl load "$TARGET_PATH"
+  exit
+fi
+
+# link a new service
+if [ "$COMMAND" == "$COMMAND_INSTALL" ] ; then
+  TARGET_PATH="$AGENTS_DIR/$PREFIX.$NAME.$EXTENSION"
+  SOURCE_PATH="$FILE"
+
+  EMPTY_STRING "$NAME" "service"
+  FILE_EXISTS "$SOURCE_PATH"
+  SERVICE_INSTALLED "$TARGET_PATH"
+
+  ln -s "$SOURCE_PATH" "$TARGET_PATH"
+  exit
+fi
+
+# unlink an existing service
+if [ "$COMMAND" == "$COMMAND_REMOVE" ] ; then
+  TARGET_PATH="$AGENTS_DIR/$PREFIX.$NAME.$EXTENSION"
+
+  EMPTY_STRING "$NAME" "service"
+  SERVICE_EXISTS "$TARGET_PATH"
+
+  rm -f "$TARGET_PATH"
+  exit
+fi
+
+# list intalled services
+if [ "$COMMAND" == "$COMMAND_LIST" ] ; then
+  ls "$AGENTS_DIR" |\
+  grep "^$PREFIX\..*\.$EXTENSION$" |\
+  sed "s/^$PREFIX.//" |\
+  sed "s/.$EXTENSION$//"
+  exit
+fi
+
+# show usage information
+if [ "$COMMAND" == "$COMMAND_HELP" ] ; then
+  SHOW_HELP
+  exit
+fi
+
+# show version information
+if [ "$COMMAND" == "--version" ] ; then
+  SHOW_VERSION
+  exit
+fi
+
+# default
+SHOW_HELP
+exit

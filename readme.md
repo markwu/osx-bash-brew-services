@@ -1,49 +1,59 @@
 # Bash Brew Service
-A set of bash scripts to take some of the pain away from managing homebrew processes with launchctl on OSX.
+A bash script to take some of the pain away from managing homebrew processes with launchctl.
 
 ### Installation
-Bash Brew Service comes with an installation script, called install.sh. For manual installation, copy all of the `service*` scripts to a directory in your `$PATH` and make them executable with `chmod u+x [script]`.
+Copy the script to a directory on your $PATH and make it executable.
 
 ```
-cd /path/to/bash/brew/service
-chmod +x install.sh
-./install.sh
+cp brew-services /usr/local/bin
+chmod +x /usr/local/bin/brew-services
 ```
-
-### Files
-`service [load/unload] [servicename]`
-
-* Starts (load) or stops (unload) a service you previously installed.
-
-`service-install [name] [plistfile]`
-
-* Links a plist file installed by a homebrew application to an arbitrary name in your `~/Library/LaunchAgents/` directory for easy loading and unloading. Installed services will also start on login unless you disable them manually.
-
-`service-remove [name]`
-
-* Removes the link to the homebrew application plist file from `~/Library/LaunchAgents/`.
-
-`service-list`
-
-* Lists all services installed with `service-install`. Unfortunately there is no way to differentiate which scripts are currently running without a large amount of bash magic that I haven't had the time to complete yet.
-
-### Uninstalling
-If you used the `install.sh` script Simply delete `~/.bin/brew-service`
 
 ### Usage
+`brew-services install [name] [file]`
 
+Links a plist `[file]` to your personal LaunchAgents directory under the `[name]` you provide. Installed services will start on login unless you disable them manually by editing the plist `[file]`.
+
+`brew-services remove [name]`
+
+Removes the link with the provided `[name]`.
+
+`brew-services start [name]`
+
+Starts an installed service by `[name]`.
+
+`brew-services stop [name]`
+
+Stops an installed service by `[name]`.
+
+`brew-services restart [name]`
+
+Restarts an installed service by `[name]`.
+
+`brew-services list`
+
+Lists all installed services.
+
+`brew-services help`
+
+Displays the script version and usage information.
+
+### Uninstalling
+Delete the script.
+
+### Examples
 ```
 $ brew install redis
-$ service-install redis /usr/local/Cellar/redis/2.8.17/homebrew.mxcl.redis.plist
-$ service-list
+$ brew-services install redis /usr/local/Cellar/redis/2.8.17/homebrew.mxcl.redis.plist
+$ brew-services list
 redis
-$ service redis load
+$ brew-services start redis
 $ redis-cli
 127.0.0.1:6379> exit
-$ service redis unload
+$ brew-services stop redis
 $ redis-cli
 Could not connect to Redis at 127.0.0.1:6379: Connection refused
-$ service-remove redis
-$ service-list
+$ brew-services remove redis
+$ brew-services list
 $ exit
 ```

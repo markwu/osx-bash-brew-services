@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-PREFIX="bash-brew-service"
-EXTENSION="plist"
-
-ls "$HOME/Library/LaunchAgents" |\
-grep "$PREFIX\..*\.$EXTENSION" |\
-sed "s/^$PREFIX.//" |\
-sed "s/.$EXTENSION$//"
