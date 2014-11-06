@@ -11,6 +11,7 @@ COMMAND_RESTART="restart" # stop then start an installed service
 COMMAND_INSTALL="install" # install a service from a plist file
 COMMAND_REMOVE="remove"   # remove an installed service by name
 COMMAND_LIST="list"       # list all installed services
+COMMAND_RUNNING="running" # list all running services
 COMMAND_HELP="help"       # show usage information
 
 # version
@@ -144,6 +145,15 @@ if [ "$COMMAND" == "$COMMAND_LIST" ] ; then
   grep "^$PREFIX\..*\.$EXTENSION$" |\
   sed "s/^$PREFIX.//" |\
   sed "s/.$EXTENSION$//"
+  exit
+fi
+
+# list running services
+if [ "$COMMAND" == "$COMMAND_RUNNING" ] ; then
+  launchctl list |\
+  cut -f3 |\
+  grep "^homebrew" |\
+  cut -f3 -d"."
   exit
 fi
 
