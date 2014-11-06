@@ -34,6 +34,10 @@ Restarts an installed service by `[name]`.
 
 Lists all installed services.
 
+`brew-services running`
+
+Lists all running services.
+
 `brew-services help`
 
 Displays the script version and usage information.
@@ -41,16 +45,19 @@ Displays the script version and usage information.
 ### Uninstalling
 Delete the script.
 
-### Examples
+### Example
 ```
 $ brew install redis
 $ brew-services install redis /usr/local/Cellar/redis/2.8.17/homebrew.mxcl.redis.plist
 $ brew-services list
 redis
 $ brew-services start redis
+$ brew-services running
+redis
 $ redis-cli
 127.0.0.1:6379> exit
 $ brew-services stop redis
+$ brew-services running
 $ redis-cli
 Could not connect to Redis at 127.0.0.1:6379: Connection refused
 $ brew-services remove redis
