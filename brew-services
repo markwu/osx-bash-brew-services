@@ -15,7 +15,7 @@ COMMAND_RUNNING="running" # list all running services
 COMMAND_HELP="help"       # show usage information
 
 # version
-SCRIPT_VERSION="1.0.1"
+SCRIPT_VERSION="1.1.0"
 
 # globals
 PREFIX="brew-service"
